@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Achievement - Zoom Effect</title>
+  <style>
+    /* General Styles */
+    * {
+      box-sizing: border-box;
+    }
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      background-color: #f4f4f4;
+    }
+
+    /* Header Style */
+    .header {
+      background-color: pink;
+      padding: 20px;
+      text-align: center;
+      animation: fadeIn 2s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      0% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+
+    /* Top Navigation Bar */
+    .topnav {
+      overflow: hidden;
+      background-color: deeppink;
+    }
+
+    .topnav a {
+      float: left;
+      display: block;
+      color: #f2f2f2;
+      text-align: center;
+      padding: 14px 16px;
+      text-decoration: none;
+    }
+
+    .topnav a:hover {
+      background-color: #f2f2f2;
+      color: black;
+    }
+
+    /* Zoom Container */
+    .img-zoom-container {
+      position: relative;
+      width: 100%;
+      max-width: 500px;
+      margin: 30px auto;
+    }
+
+    /* Zoom Lens */
+    .img-zoom-lens {
+      position: absolute;
+      border: 1px solid #d4d4d4;
+      width: 40px;
+      height: 40px;
+    }
+
+    /* Zoomed Result */
+    .img-zoom-result {
+      border: 1px solid #d4d4d4;
+      width: 100%;
+      height: 300px;
+      margin-left: 30px;
+      background-color: #f0f0f0;
+    }
+
+    /* Image Container with Overlay */
+    .container {
+      position: relative;
+      width: 50%;
+      max-width: 300px;
+      display: inline-block;
+    }
+
+    .image {
+      width: 100%;
+      height: auto;
+    }
+
+    .overlay {
+      position: absolute;
+      bottom: 0;
+      background: rgba(0, 0, 0, 0.5);
+      color: white;
+      width: 100%;
+      transition: 0.5s ease;
+      opacity: 0;
+      font-size: 20px;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .container:hover .overlay {
+      opacity: 1;
+    }
+
+    /* Centering Content */
+    center {
+      display: block;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Header Section -->
+<div class="header">
+  <h1>Achievement</h1>
+</div>
+
+<!-- Navigation Bar -->
+<div class="topnav">
+  <a href="index.html" class="button-link">Home</a>
+  <a href="education.html" class="button-link">Education</a>
+  <a href="achievement.html" class="button-link">Achievement</a>
+  <a href="contact.html" class="button-link">Contact</a>
+  <a href="gallery.html" class="button-link">Gallery</a>
+</div>
+
+<!-- Content Section with Images and Zoom Effect -->
+<center>
+  <h2>Sijil Pelajaran Malaysia (SPM) result</h2>
+
+  <!-- Image Container with Zoom -->
+  <div class="img-zoom-container">
+    <img id="spmImage" src="spm.jpg" width="400" height="500">
+    <div id="spmResult" class="img-zoom-result"></div>
+  </div>
+
+  <br>
+
+  <h2>UiTM Kampus Dengkil's result</h2>
+  
+  <!-- Image Container with Zoom -->
+  <div class="img-zoom-container">
+    <img id="uitmImage" src="uitm.jpg" width="400" height="500">
+    <div id="uitmResult" class="img-zoom-result"></div>
+  </div>
+
+  <br>
+
+  <!-- Image with Overlay Text -->
+  <h2>Sijil Pelajaran Malaysia (SPM) result</h2>
+  <div class="container">
+    <img src="spm.jpg" alt="spm" class="image">
+    <div class="overlay">7As 2Bs</div>
+  </div>
+
+  <br>
+
+  <h2>UiTM Kampus Dengkil's result</h2>
+  <div class="container">
+    <img src="uitm.jpg" alt="uitm" class="image">
+    <div class="overlay">CGPA: 4.00, 3.91, 4.00</div>
+  </div>
+</center>
+
+<script>
+  // Function for zoom effect
+  function imageZoom(imgID, resultID) {
+    var img, lens, result, cx, cy;
+    img = document.getElementById(imgID);
+    result = document.getElementById(resultID);
+
+    // Create zoom lens
+    lens = document.createElement("DIV");
+    lens.setAttribute("class", "img-zoom-lens");
+    img.parentElement.insertBefore(lens, img);
+
+    // Calculate ratio for zoom
+    cx = result.offsetWidth / lens.offsetWidth;
+    cy = result.offsetHeight / lens.offsetHeight;
+
+    // Set background image properties for zoom result
+    result.style.backgroundImage = "url('" + img.src + "')";
+    result.style.backgroundSize = (img.width * cx) + "px " + (img.height * cy) + "px";
+
+    // Add mousemove event to lens and image
+    lens.addEventListener("mousemove", moveLens);
+    img.addEventListener("mousemove", moveLens);
+
+    // For touch screens
+    lens.addEventListener("touchmove", moveLens);
+    img.addEventListener("touchmove", moveLens);
+
+    // Move lens and zoom result
+    function moveLens(e) {
+      var pos, x, y;
+      e.preventDefault();
+      pos = getCursorPos(e);
+      x = pos.x - (lens.offsetWidth / 2);
+      y = pos.y - (lens.offsetHeight / 2);
+
+      // Ensure lens doesn't go outside the image
+      if (x > img.width - lens.offsetWidth) {x = img.width - lens.offsetWidth;}
+      if (x < 0) {x = 0;}
+      if (y > img.height - lens.offsetHeight) {y = img.height - lens.offsetHeight;}
+      if (y < 0) {y = 0;}
+
+      lens.style.left = x + "px";
+      lens.style.top = y + "px";
+
+      // Move zoom result background
+      result.style.backgroundPosition = "-" + (x * cx) + "px -" + (y * cy) + "px";
+    }
+
+    // Get cursor position relative to image
+    function getCursorPos(e) {
+      var a, x = 0, y = 0;
+      e = e || window.event;
+      a = img.getBoundingClientRect();
+      x = e.pageX - a.left;
+      y = e.pageY - a.top;
+      x = x - window.pageXOffset;
+      y = y - window.pageYOffset;
+      return {x: x, y: y};
+    }
+  }
+
+  // Initiate zoom effect
+  imageZoom("spmImage", "spmResult");
+  imageZoom("uitmImage", "uitmResult");
+</script>
+
+</body>
+</html>
+
